@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import QrScanner from 'react-qr-scanner';
 import styled from 'styled-components';
-import { device } from '../mediaQueries';
-import Result from './result';
+import { device } from '../mediaQueries'; // Make sure mediaQueries is correctly set up
+import Result from './result'; // Ensure the import matches your filename casing
 
 const Container = styled.div`
   display: flex;
@@ -23,7 +23,7 @@ const Heading = styled.h1`
   }
 `;
 
-const Result = styled.p`
+const ResultText = styled.p`
   margin-top: 20px;
   font-size: 1.5rem;
   color: #4a148c;
@@ -37,7 +37,7 @@ const previewStyle = {
   borderRadius: '10px',
 };
 
-const Scanner = ({ onScan }) => {
+const Scanner = () => {
   const [error, setError] = useState(null);
   const [scannedData, setScannedData] = useState(null); // State for scanned data
   const [facingMode, setFacingMode] = useState('environment');
@@ -51,7 +51,7 @@ const Scanner = ({ onScan }) => {
     })
     .catch((err) => {
       console.error('Error accessing camera: ', err);
-      setFacingMode('user');
+      setFacingMode('user'); // Switch to front camera if back camera fails
     });
   }, []);
 
@@ -77,7 +77,8 @@ const Scanner = ({ onScan }) => {
         constraints={{ video: { facingMode } }}
       />
       {error && <p>Error: {error.message}</p>}
-      {scannedData && <Result>Scanned Data: {scannedData}</Result>} {/* Display scanned data */}
+      {scannedData && <ResultText>Scanned Data: {scannedData}</ResultText>} {/* Display scanned data */}
+      {scannedData && <Result data={scannedData} />} {/* Display Result component if scanned data is available */}
     </Container>
   );
 };
