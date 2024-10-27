@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import QrScanner from 'react-qr-scanner';
 import styled from 'styled-components';
 import { device } from '../mediaQueries';
+import Result from './result';
 
 const Container = styled.div`
   display: flex;

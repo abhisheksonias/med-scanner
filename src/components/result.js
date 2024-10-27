@@ -5,7 +5,7 @@ const Result = ({ data }) => {
     <div>
       <h2>Medicine Verification Result</h2>
       <p>Scanned Data: {data}</p>
-      {/* You will replace this with blockchain result */}
+      {/* Replace this with your blockchain verification logic */}
       <p>Status: {data === "VALID_TOKEN" ? "Real Medicine" : "Fake Medicine"}</p>
     </div>
   );
