@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import Scanner from './components/scanner';
+import Result from './components/result';
+import styled from 'styled-components'
+import { device } from './mediaQueries';
 
-function App() {
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #e0f7fa;
+
+  @media ${device.mobileL} {
+    padding: 20px;
+  }
+`;
+
+const AppTitle = styled.h1`
+  font-size: 3rem;
+  color: #4a148c; /* Violet */
+  margin-bottom: 30px;
+`;
+
+const App = () => {
+  const [medicineData, setMedicineData] = useState(null);
+
+  const handleScan = (data) => {
+    console.log("Scanned data: ", data);
+    setMedicineData(data);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContainer>
+      <AppTitle>Satyamed: Medicine Verification</AppTitle>
+      {medicineData ? (
+        <Result data={medicineData} />
+      ) : (
+        <Scanner onScan={handleScan} />
+      )}
+    </AppContainer>
   );
-}
+};
 
 export default App;
