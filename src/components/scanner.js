@@ -43,6 +43,11 @@ const Scanner = ({ onScan }) => {
     setError(err);
   };
 
+  // Specify constraints for the camera
+  const constraints = {
+    facingMode: { exact: 'environment' }, // Use the back camera
+  };
+
   return (
     <Container>
       <Heading>Scan Medicine QR Code</Heading>
@@ -51,7 +56,7 @@ const Scanner = ({ onScan }) => {
         style={previewStyle}
         onError={handleError}
         onScan={handleScan}
-        facingMode="environment" // Use the back camera
+        constraints={constraints} // Set the constraints
       />
       {error && <p>Error: {error.message}</p>}
     </Container>
