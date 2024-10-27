@@ -22,6 +22,12 @@ const Heading = styled.h1`
   }
 `;
 
+const Result = styled.p`
+  margin-top: 20px;
+  font-size: 1.5rem;
+  color: #4a148c;
+`;
+
 const previewStyle = {
   height: 'auto',
   width: '80%',
@@ -32,25 +38,25 @@ const previewStyle = {
 
 const Scanner = ({ onScan }) => {
   const [error, setError] = useState(null);
-  const [facingMode, setFacingMode] = useState('environment'); // Default to back camera
+  const [scannedData, setScannedData] = useState(null); // State for scanned data
+  const [facingMode, setFacingMode] = useState('environment');
 
   useEffect(() => {
-    // Request access to the back camera
     navigator.mediaDevices.getUserMedia({
       video: { facingMode: { exact: 'environment' } },
     })
     .then((stream) => {
-      // Successfully accessed the back camera
       console.log('Back camera is ready');
     })
     .catch((err) => {
       console.error('Error accessing camera: ', err);
-      setFacingMode('user'); // Fallback to front camera if back camera is not available
+      setFacingMode('user');
     });
   }, []);
 
   const handleScan = (data) => {
     if (data) {
+      setScannedData(data); // Store scanned data
       onScan(data);
     }
   };
@@ -67,9 +73,10 @@ const Scanner = ({ onScan }) => {
         style={previewStyle}
         onError={handleError}
         onScan={handleScan}
-        constraints={{ video: { facingMode } }} // Set the facing mode based on state
+        constraints={{ video: { facingMode } }}
       />
       {error && <p>Error: {error.message}</p>}
+      {scannedData && <Result>Scanned Data: {scannedData}</Result>} {/* Display scanned data */}
     </Container>
   );
 };
