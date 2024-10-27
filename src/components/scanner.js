@@ -55,9 +55,9 @@ const Scanner = ({ onScan }) => {
   }, []);
 
   const handleScan = (data) => {
+    console.log('Scanned data:', data); // Log scanned data
     if (data) {
-      setScannedData(data); // Store scanned data
-      onScan(data);
+      setScannedData(data);
     }
   };
 
