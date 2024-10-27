@@ -10,10 +10,6 @@ const Container = styled.div`
   justify-content: center;
   height: 100vh;
   background-color: #e0f7fa;
-
-  @media ${device.mobileL} {
-    padding: 10px;
-  }
 `;
 
 const Heading = styled.h1`
@@ -32,10 +28,6 @@ const previewStyle = {
   maxWidth: '500px',
   border: '5px solid #4a148c',
   borderRadius: '10px',
-
-  '@media (max-width: 600px)': {
-    width: '100%',
-  },
 };
 
 const Scanner = ({ onScan }) => {
@@ -59,6 +51,7 @@ const Scanner = ({ onScan }) => {
         style={previewStyle}
         onError={handleError}
         onScan={handleScan}
+        facingMode="environment" // Use the back camera
       />
       {error && <p>Error: {error.message}</p>}
     </Container>
