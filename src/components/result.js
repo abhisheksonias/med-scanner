@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
 // Styled components
 const ResultContainer = styled.div`
   background-color: #f9f9f9;
@@ -40,11 +42,9 @@ const Result = ({ data }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate a blockchain verification function
     const verifyWithBlockchain = async (qrData) => {
-      // Replace this with your actual blockchain API call
       const isValid = await fetchBlockchainData(qrData);
-      setVerificationResult(isValid ? "Real Medicine" : "Fake Medicine");
+      setVerificationResult(isValid);
       setLoading(false);
     };
 
@@ -52,22 +52,22 @@ const Result = ({ data }) => {
   }, [data]);
 
   const fetchBlockchainData = async (qrData) => {
-    // Simulated response from the blockchain
-    // Here you should call your blockchain API to verify the data
-    // Example: const response = await fetch(`your_api_endpoint/${qrData}`);
-    // const result = await response.json();
-    // return result.isValid;
-
-    // For now, we simulate a valid check for demonstration purposes
-    return qrData === "VALID_TOKEN"; // Change this logic based on your blockchain response
+    // Simulated response logic for demonstration
+    return qrData === "VALID_TOKEN"; // Replace this with your actual verification logic
   };
 
   return (
-    <div>
-      <h2>Medicine Verification Result</h2>
-      <p>Scanned Data: {data}</p>
-      {loading ? <p>Loading verification...</p> : <p>Status: {verificationResult}</p>}
-    </div>
+    <ResultContainer>
+      <Heading>Medicine Verification Result</Heading>
+      <DataText>Scanned Data: {data}</DataText>
+      {loading ? (
+        <Loader>Loading verification...</Loader>
+      ) : (
+        <StatusText isValid={verificationResult}>
+          Status: {verificationResult ? "Real Medicine" : "Fake Medicine"}
+        </StatusText>
+      )}
+    </ResultContainer>
   );
 };
 
