@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import QrScanner from 'react-qr-scanner';
+import QrScanner from 'react-qr-scanner'; // Ensure this matches the correct package
 import styled from 'styled-components';
-import { device } from '../mediaQueries'; // Make sure mediaQueries is correctly set up
-import Result from './result'; // Ensure the import matches your filename casing
+import { device } from '../mediaQueries';
+import { Contract } from '@ethersproject/contracts';
+import { Web3Provider } from '@ethersproject/providers';
+import MedicineRegistryABI from './MedicineRegistryABI.json';
+
+const CONTRACT_ADDRESS = "0x56F0DeDb1e9f7f84EaBec307dCBE407c5C959AF1";
 
 const Container = styled.div`
   display: flex;
@@ -39,30 +43,50 @@ const previewStyle = {
 
 const Scanner = () => {
   const [error, setError] = useState(null);
-  const [scannedData, setScannedData] = useState(null); // State for scanned data
-  const [facingMode, setFacingMode] = useState('environment');
+  const [scannedData, setScannedData] = useState(null);
+  const [verificationStatus, setVerificationStatus] = useState(null);
 
-  useEffect(() => {
-    navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { exact: 'environment' } },
-    })
-    .then((stream) => {
-      console.log('Back camera is ready');
-    })
-    .catch((err) => {
-      console.error('Error accessing camera: ', err);
-      setFacingMode('user'); // Switch to front camera if back camera fails
-    });
-  }, []);
+  const verifyMedicine = async (medicineId) => {
+    if (!window.ethereum) {
+      setVerificationStatus('MetaMask not found');
+      return;
+    }
+
+    try {
+      const provider = new Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, MedicineRegistryABI, signer);
+
+      // Retrieve medicine info
+      const [name, metadata, manufacturer] = await contract.getMedicine(medicineId);
+      setVerificationStatus(`Real Medicine - Name: ${name}, Manufacturer: ${manufacturer}`);
+    } catch (err) {
+      console.error("Medicine does not exist on the blockchain:", err);
+      setVerificationStatus('Fake Medicine');
+    }
+  };
 
   const handleScan = (data) => {
-    console.log('Scanned data:', data); // Log scanned data
-    if (data) {
-      setScannedData(data);
+    if (data && data.text) {
+      try {
+        const url = new URL(data.text); // Assuming data.text is the scanned URL
+        const medicineId = url.searchParams.get('id');
+
+        setScannedData(data);
+        if (medicineId) {
+          verifyMedicine(medicineId);
+        } else {
+          setVerificationStatus('Invalid QR code');
+        }
+      } catch (err) {
+        setVerificationStatus('Invalid QR code format');
+      }
     }
   };
 
   const handleError = (err) => {
+    console.error(err);
     setError(err);
   };
 
@@ -74,11 +98,10 @@ const Scanner = () => {
         style={previewStyle}
         onError={handleError}
         onScan={handleScan}
-        constraints={{ video: { facingMode } }}
       />
       {error && <p>Error: {error.message}</p>}
-      {scannedData && <ResultText>Scanned Data: {scannedData}</ResultText>} {/* Display scanned data */}
-      {scannedData && <Result data={scannedData} />} {/* Display Result component if scanned data is available */}
+      {scannedData && <ResultText>Scanned Data: {scannedData.text}</ResultText>}
+      {verificationStatus && <ResultText>Verification Status: {verificationStatus}</ResultText>}
     </Container>
   );
 };
